@@ -1,6 +1,6 @@
-import {ISubOptions, ISubStat, SubEvent, SubFunction} from './event.js';
-import {Subscription} from './sub.js';
-import {Private} from './utils/index.js';
+import { ISubOptions, ISubStat, SubEvent, SubFunction } from "./event.js";
+import { Subscription } from "./sub.js";
+import { Private } from "./utils/index.js";
 
 /**
  * Private-property implementation.
@@ -41,57 +41,55 @@ const pp = new Private<EventConsumer, SubEvent<any>>();
  * ```
  */
 export class EventConsumer<T = unknown, E extends SubEvent<T> = SubEvent<T>> {
+  /**
+   * Class Constructor.
+   *
+   * @param event
+   * Event object to be encapsulated.
+   */
+  constructor(event: E) {
+    pp.set(this, event);
+  }
 
-    /**
-     * Class Constructor.
-     *
-     * @param event
-     * Event object to be encapsulated.
-     */
-    constructor(event: E) {
-        pp.set(this, event);
-    }
+  /**
+   * Forwards into [[SubEvent.count]] of the contained event.
+   */
+  get count(): number {
+    return pp.get(this).count;
+  }
 
-    /**
-     * Forwards into [[SubEvent.count]] of the contained event.
-     */
-    get count(): number {
-        return pp.get(this).count;
-    }
+  /**
+   * Forwards into [[SubEvent.maxSubs]] of the contained event.
+   */
+  get maxSubs(): number {
+    return pp.get(this).maxSubs;
+  }
 
-    /**
-     * Forwards into [[SubEvent.maxSubs]] of the contained event.
-     */
-    get maxSubs(): number {
-        return pp.get(this).maxSubs;
-    }
+  /**
+   * Forwards into [[SubEvent.subscribe]] of the contained event.
+   */
+  subscribe(cb: SubFunction<T>, options?: ISubOptions): Subscription {
+    return pp.get(this).subscribe(cb, options);
+  }
 
-    /**
-     * Forwards into [[SubEvent.subscribe]] of the contained event.
-     */
-    subscribe(cb: SubFunction<T>, options?: ISubOptions): Subscription {
-        return pp.get(this).subscribe(cb, options);
-    }
+  /**
+   * Forwards into [[SubEvent.once]] of the contained event.
+   */
+  once(cb: SubFunction<T>, options?: ISubOptions): Subscription {
+    return pp.get(this).once(cb, options);
+  }
 
-    /**
-     * Forwards into [[SubEvent.once]] of the contained event.
-     */
-    once(cb: SubFunction<T>, options?: ISubOptions): Subscription {
-        return pp.get(this).once(cb, options);
-    }
+  /**
+   * Forwards into [[SubEvent.toPromise]] of the contained event.
+   */
+  toPromise(options?: { name?: string; timeout?: number }): Promise<T> {
+    return pp.get(this).toPromise(options);
+  }
 
-    /**
-     * Forwards into [[SubEvent.toPromise]] of the contained event.
-     */
-    toPromise(options?: { name?: string, timeout?: number }): Promise<T> {
-        return pp.get(this).toPromise(options);
-    }
-
-    /**
-     * Forwards into [[SubEvent.getStat]] of the contained event.
-     */
-    getStat(options?: { minUse?: number }): ISubStat {
-        return pp.get(this).getStat(options);
-    }
-
+  /**
+   * Forwards into [[SubEvent.getStat]] of the contained event.
+   */
+  getStat(options?: { minUse?: number }): ISubStat {
+    return pp.get(this).getStat(options);
+  }
 }
