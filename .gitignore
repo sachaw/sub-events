@@ -1,11 +1,22 @@
-.idea/
-.nyc_output/
-node_modules/
-coverage/
-package-lock.json
-deploy/
-dist/
-ext/
-docs/
-**/*.js
-**/*.d.ts
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Typedoc files
+docs
+
+# Build output
+dist
+
+# Node Modules
+node_modules
+
+# Misc
+.DS_Store
