@@ -1,12 +1,12 @@
 import { chai, expect } from "./index.js";
-import { EmitSchedule, ISubCountChange, SubEventCount } from "../src/index.js";
+import { EmitSchedule, SubCountChange, SubEventCount } from "../src/index.js";
 
 const dummy = () => {};
 
 describe("SubEventCount", () => {
   it("must notify about the count", () => {
     const a = new SubEventCount<string>();
-    const cb = (data: ISubCountChange) => {};
+    const cb = (data: SubCountChange) => {};
     const s = chai.spy(cb);
     a.onCount.subscribe(s);
     a.subscribe(() => {});
@@ -28,9 +28,9 @@ describe("SubEventCount", () => {
   });
   describe("cancelAll", () => {
     it("must notify about zero clients", () => {
-      const received: ISubCountChange[] = [];
+      const received: SubCountChange[] = [];
       const a = new SubEventCount<string>();
-      a.onCount.subscribe((data: ISubCountChange) => {
+      a.onCount.subscribe((data: SubCountChange) => {
         received.push(data);
       });
       const sub1 = a.subscribe(() => 123);
@@ -53,7 +53,7 @@ describe("SubEventCount", () => {
     it("must not allow emits from counts of cancelled subs", () => {
       const received: any[] = [];
       const a = new SubEventCount<string>();
-      a.onCount.subscribe((data: ISubCountChange) => {
+      a.onCount.subscribe((data: SubCountChange) => {
         received.push(data);
         a.emit("hello");
       });
@@ -70,7 +70,7 @@ describe("SubEventCount", () => {
   });
   describe("with options", () => {
     it("must allow empty options", () => {
-      let res: ISubCountChange | null = null;
+      let res: SubCountChange | null = null;
       const a = new SubEventCount<string>({});
       a.onCount.subscribe((data) => {
         res = data;
@@ -79,9 +79,9 @@ describe("SubEventCount", () => {
       expect(res).to.eql({ prevCount: 0, newCount: 1 });
     });
     it("must support async notifications", (done) => {
-      let res: ISubCountChange | null = null;
+      let res: SubCountChange | null = null;
       const a = new SubEventCount<string>({
-        emitOptions: { schedule: EmitSchedule.async },
+        emitOptions: { schedule: EmitSchedule.Async },
       });
       a.onCount.subscribe((data) => {
         res = data;

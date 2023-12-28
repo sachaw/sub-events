@@ -1,9 +1,9 @@
-import { IEmitOptions, IEventOptions, ISubscriber, SubEvent } from "./event.js";
+import { EmitOptions, EventOptions, Subscriber, SubEvent } from "./event.js";
 
 /**
  * Represents a change in the number of subscriptions, as used with [[onCount]] event.
  */
-export interface ISubCountChange {
+export interface SubCountChange {
   /**
    * New number of subscriptions.
    */
@@ -18,11 +18,11 @@ export interface ISubCountChange {
 /**
  * Constructor options for [[SubEventCount]] class.
  */
-export interface ICountOptions<T> extends IEventOptions<T> {
+export interface ICountOptions<T> extends EventOptions<T> {
   /**
    * Emit options for event [[onCount]].
    */
-  emitOptions?: IEmitOptions;
+  emitOptions?: EmitOptions;
 }
 
 /**
@@ -34,13 +34,13 @@ export class SubEventCount<T = unknown> extends SubEvent<T> {
   /**
    * @hidden
    */
-  protected _notify: (data: ISubCountChange) => SubEvent<ISubCountChange>;
+  protected _notify: (data: SubCountChange) => SubEvent<SubCountChange>;
 
   /**
    * Triggered on any change in the number of subscriptions.
    * @event onCount
    */
-  readonly onCount: SubEvent<ISubCountChange> = new SubEvent();
+  readonly onCount: SubEvent<SubCountChange> = new SubEvent();
 
   /**
    * @constructor
@@ -51,8 +51,8 @@ export class SubEventCount<T = unknown> extends SubEvent<T> {
    */
   constructor(options?: ICountOptions<T>) {
     super(options);
-    const eo = options && options.emitOptions;
-    this._notify = (data: ISubCountChange) => this.onCount.emit(data, eo);
+    const eo = options?.emitOptions;
+    this._notify = (data: SubCountChange) => this.onCount.emit(data, eo);
   }
 
   /**
@@ -80,7 +80,7 @@ export class SubEventCount<T = unknown> extends SubEvent<T> {
    * `subscribe` and `cancel` calls.
    * @hidden
    */
-  protected _createCancel(sub: ISubscriber<T>): () => void {
+  protected _createCancel(sub: Subscriber<T>): () => void {
     const s = this._subs;
     this._notify({ newCount: s.length, prevCount: s.length - 1 });
     return () => {

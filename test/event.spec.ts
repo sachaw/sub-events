@@ -2,7 +2,7 @@ import { chai, dummy, expect } from "./index.js";
 import {
   EmitSchedule,
   EventConsumer,
-  ISubContext,
+  SubContext,
   SubEvent,
 } from "../src/index.js";
 
@@ -30,7 +30,7 @@ describe("SubEvent", () => {
         expect(s).to.have.been.called.with(123);
         done();
       },
-      schedule: EmitSchedule.async,
+      schedule: EmitSchedule.Async,
     });
   });
   it("must cease async notifications when cancelled", (done) => {
@@ -40,9 +40,9 @@ describe("SubEvent", () => {
       values.push(value);
       sub.cancel();
     });
-    a.emit(1, { schedule: EmitSchedule.async });
-    a.emit(2, { schedule: EmitSchedule.async });
-    a.emit(3, { schedule: EmitSchedule.async, onError: dummy });
+    a.emit(1, { schedule: EmitSchedule.Async });
+    a.emit(2, { schedule: EmitSchedule.Async });
+    a.emit(3, { schedule: EmitSchedule.Async, onError: dummy });
     setTimeout(() => {
       expect(values).to.eql([1]);
       done();
@@ -88,10 +88,10 @@ describe("SubEvent", () => {
   it("must call onCancel during cancellation", () => {
     let data,
       called = false;
-    const onSubscribe = (ctx: ISubContext) => {
+    const onSubscribe = (ctx: SubContext) => {
       ctx.data = 123;
     };
-    const onCancel = (ctx: ISubContext) => {
+    const onCancel = (ctx: SubContext) => {
       data = ctx.data;
       called = true;
     };
@@ -142,8 +142,8 @@ describe("subscribe", () => {
     expect(sub.name).to.eq("my-sub");
   });
   it("must call onSubscribe when specified", () => {
-    let context: ISubContext | undefined;
-    const onSubscribe = (ctx: ISubContext) => {
+    let context: SubContext | undefined;
+    const onSubscribe = (ctx: SubContext) => {
       context = ctx;
     };
     const a = new SubEvent({ onSubscribe });
@@ -171,10 +171,10 @@ describe("cancelAll", () => {
   });
   it("must invoke onCancel for each subscription", () => {
     let data;
-    const onSubscribe = (ctx: ISubContext<string>) => {
+    const onSubscribe = (ctx: SubContext<string>) => {
       ctx.data = 123;
     };
-    const onCancel = (ctx: ISubContext<string>) => {
+    const onCancel = (ctx: SubContext<string>) => {
       data = ctx.data;
     };
     const a = new SubEvent<string>({ onSubscribe, onCancel });
@@ -271,7 +271,7 @@ describe("emit", () => {
       );
       const handler = () => 1;
       const onError = chai.spy(handler);
-      a.emit(123, { onError, schedule: EmitSchedule.async });
+      a.emit(123, { onError, schedule: EmitSchedule.Async });
       setTimeout(() => {
         expect(onError).to.have.been.called.with(err, "async-test");
         done();
@@ -327,7 +327,7 @@ describe("emit", () => {
       });
       const handler = () => 1;
       const onError = chai.spy(handler);
-      b.emit(123, { onError, schedule: EmitSchedule.async });
+      b.emit(123, { onError, schedule: EmitSchedule.Async });
       setTimeout(() => {
         expect(onError).to.have.been.called.with(err);
         done();
@@ -337,7 +337,7 @@ describe("emit", () => {
   describe("next", () => {
     it("must delay event broadcast", async () => {
       const e = new SubEvent<number>();
-      e.emit(123, { schedule: EmitSchedule.next });
+      e.emit(123, { schedule: EmitSchedule.Next });
       const data = await e.toPromise({ timeout: 0 });
       expect(data).to.equal(123);
     });
@@ -345,7 +345,7 @@ describe("emit", () => {
   describe("async", () => {
     it("must delay event broadcast", async () => {
       const e = new SubEvent<number>();
-      e.emit(123, { schedule: EmitSchedule.async });
+      e.emit(123, { schedule: EmitSchedule.Async });
       const data = await e.toPromise({ timeout: 0 });
       expect(data).to.equal(123);
     });

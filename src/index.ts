@@ -2,12 +2,16 @@ export { Subscription } from "./sub.js";
 export {
   SubEvent,
   SubFunction,
-  ISubContext,
-  IEventOptions,
-  ISubOptions,
-  ISubStat,
+  SubContext,
+  EventOptions,
+  SubOptions,
+  SubStat,
   EmitSchedule,
-  IEmitOptions,
+  EmitOptions,
 } from "./event.js";
-export { SubEventCount, ISubCountChange, ICountOptions } from "./count.js";
+export {
+  SubEventCount,
+  SubCountChange,
+  ICountOptions,
+} from "./count.js";
 export { EventConsumer } from "./consumer.js";

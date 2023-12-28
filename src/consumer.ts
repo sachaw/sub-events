@@ -1,4 +1,4 @@
-import { ISubOptions, ISubStat, SubEvent, SubFunction } from "./event.js";
+import { SubOptions, SubStat, SubEvent, SubFunction } from "./event.js";
 import { Subscription } from "./sub.js";
 import { Private } from "./utils/index.js";
 
@@ -68,14 +68,14 @@ export class EventConsumer<T = unknown, E extends SubEvent<T> = SubEvent<T>> {
   /**
    * Forwards into [[SubEvent.subscribe]] of the contained event.
    */
-  subscribe(cb: SubFunction<T>, options?: ISubOptions): Subscription {
+  subscribe(cb: SubFunction<T>, options?: SubOptions): Subscription {
     return pp.get(this).subscribe(cb, options);
   }
 
   /**
    * Forwards into [[SubEvent.once]] of the contained event.
    */
-  once(cb: SubFunction<T>, options?: ISubOptions): Subscription {
+  once(cb: SubFunction<T>, options?: SubOptions): Subscription {
     return pp.get(this).once(cb, options);
   }
 
@@ -89,7 +89,7 @@ export class EventConsumer<T = unknown, E extends SubEvent<T> = SubEvent<T>> {
   /**
    * Forwards into [[SubEvent.getStat]] of the contained event.
    */
-  getStat(options?: { minUse?: number }): ISubStat {
+  getStat(options?: { minUse?: number }): SubStat {
     return pp.get(this).getStat(options);
   }
 }

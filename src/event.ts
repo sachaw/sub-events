@@ -11,7 +11,7 @@ export enum EmitSchedule {
    *
    * This is the default schedule.
    */
-  sync = "sync",
+  Sync = "sync",
 
   /**
    * Data broadcast is fully asynchronous: each subscriber will be receiving the event
@@ -19,7 +19,7 @@ export enum EmitSchedule {
    *
    * Subscribers are enumerated after the initial delay.
    */
-  async = "async",
+  Async = "async",
 
   /**
    * Wait for the next processor tick (under Node.js), or timer tick (in browsers),
@@ -27,13 +27,13 @@ export enum EmitSchedule {
    *
    * Subscribers are enumerated after the delay.
    */
-  next = "next",
+  Next = "next",
 }
 
 /**
  * Options to be used with method [[emit]].
  */
-export interface IEmitOptions {
+export interface EmitOptions {
   /**
    * Event-emitting schedule. Default is `sync`.
    */
@@ -73,7 +73,7 @@ export interface IEmitOptions {
  * Subscription Context Interface, as used with [[onSubscribe]] and [[onCancel]]
  * notification options that can be set during [[SubEvent]] construction.
  */
-export interface ISubContext<T = unknown> {
+export interface SubContext<T = unknown> {
   /**
    * Event object that provides the context.
    */
@@ -94,7 +94,7 @@ export interface ISubContext<T = unknown> {
 /**
  * Constructor options for [[SubEvent]] class.
  */
-export interface IEventOptions<T> {
+export interface EventOptions<T> {
   /**
    * Maximum number of subscribers that can receive events.
    * Default is 0, meaning `no limit applies`.
@@ -114,7 +114,7 @@ export interface IEventOptions<T> {
    * @param ctx
    * `ctx`: [[ISubContext]] - Subscription Context.
    */
-  onSubscribe?: (ctx: ISubContext<T>) => void;
+  onSubscribe?: (ctx: SubContext<T>) => void;
 
   /**
    * Notification about a cancelled subscription.
@@ -126,13 +126,13 @@ export interface IEventOptions<T> {
    * @param ctx
    * `ctx`: [[ISubContext]] - Subscription Context.
    */
-  onCancel?: (ctx: ISubContext<T>) => void;
+  onCancel?: (ctx: SubContext<T>) => void;
 }
 
 /**
  * Options that can be passed into method [[subscribe]].
  */
-export interface ISubOptions {
+export interface SubOptions {
   /**
    * Unique subscription name. It helps with diagnosing subscription leaks,
    * via method [[getStat]], and provides additional details during error handling.
@@ -169,7 +169,7 @@ export interface ISubOptions {
 /**
  * Subscriptions statistics, as returned by method [[getStat]].
  */
-export interface ISubStat {
+export interface SubStat {
   /**
    * Map of subscription names to their usage counters. It consists of only
    * subscriptions for which option `name` was set when calling [[subscribe]].
@@ -191,7 +191,7 @@ export type SubFunction<T> = (data: T) => any;
  * Internal structure for each subscriber.
  * @hidden
  */
-export interface ISubscriber<T> extends ISubContext<T> {
+export interface Subscriber<T> extends SubContext<T> {
   /**
    * Event notification callback function.
    */
@@ -216,13 +216,13 @@ export class SubEvent<T = unknown> {
   /**
    * @hidden
    */
-  readonly options: IEventOptions<T>;
+  readonly options: EventOptions<T>;
 
   /**
    * Internal list of subscribers.
    * @hidden
    */
-  protected _subs: ISubscriber<T>[] = [];
+  protected _subs: Subscriber<T>[] = [];
 
   /**
    * @constructor
@@ -231,7 +231,7 @@ export class SubEvent<T = unknown> {
    * @param options
    * Configuration Options.
    */
-  constructor(options?: IEventOptions<T>) {
+  constructor(options?: EventOptions<T>) {
     if (typeof (options ?? {}) !== "object") {
       throw new TypeError(Stat.errInvalidOptions);
     }
@@ -275,7 +275,7 @@ export class SubEvent<T = unknown> {
    *
    * @see [[once]]
    */
-  public subscribe(cb: SubFunction<T>, options?: ISubOptions): Subscription {
+  public subscribe(cb: SubFunction<T>, options?: SubOptions): Subscription {
     if (typeof (options ?? {}) !== "object") {
       throw new TypeError(Stat.errInvalidOptions);
     }
@@ -285,10 +285,10 @@ export class SubEvent<T = unknown> {
         options.onCancel();
       }
     };
-    const name = options && options.name;
-    const sub: ISubscriber<T> = { event: this, cb, name, cancel };
+    const name = options?.name;
+    const sub: Subscriber<T> = { event: this, cb, name, cancel };
     if (typeof this.options.onSubscribe === "function") {
-      const ctx: ISubContext<T> = {
+      const ctx: SubContext<T> = {
         event: sub.event,
         name: sub.name,
         data: sub.data,
@@ -318,10 +318,10 @@ export class SubEvent<T = unknown> {
    *
    * @see [[toPromise]]
    */
-  public once(cb: SubFunction<T>, options?: ISubOptions): Subscription {
+  public once(cb: SubFunction<T>, options?: SubOptions): Subscription {
     const sub = this.subscribe((data: T) => {
       sub.cancel();
-      return cb.call(options && options.thisArg, data);
+      return cb.call(options?.thisArg, data);
     }, options);
     return sub;
   }
@@ -339,26 +339,25 @@ export class SubEvent<T = unknown> {
    * @returns
    * The event object itself.
    */
-  public emit(data: T, options?: IEmitOptions): this {
+  public emit(data: T, options?: EmitOptions): this {
     if (typeof (options ?? {}) !== "object") {
       throw new TypeError(Stat.errInvalidOptions);
     }
-    const schedule: EmitSchedule =
-      (options && options.schedule) ?? EmitSchedule.sync;
+    const schedule: EmitSchedule = options?.schedule ?? EmitSchedule.Sync;
     const onFinished =
       options && typeof options.onFinished === "function" && options.onFinished;
     const onError =
       options && typeof options.onError === "function" && options.onError;
-    const start = schedule === EmitSchedule.sync ? Stat.callNow : Stat.callNext;
+    const start = schedule === EmitSchedule.Sync ? Stat.callNow : Stat.callNext;
     const middle =
-      schedule === EmitSchedule.async ? Stat.callNext : Stat.callNow;
+      schedule === EmitSchedule.Async ? Stat.callNext : Stat.callNow;
     start(() => {
       const r = this._getRecipients();
       r.forEach((sub, index) =>
         middle(() => {
           if (onError) {
             try {
-              const res = sub.cb && sub.cb(data);
+              const res = sub?.cb(data);
               if (res && typeof res.catch === "function") {
                 res.catch((err: any) => onError(err, sub.name));
               }
@@ -366,7 +365,7 @@ export class SubEvent<T = unknown> {
               onError(e, sub.name);
             }
           } else {
-            sub.cb && sub.cb(data);
+            sub?.cb(data);
           }
           if (onFinished && index === r.length - 1) {
             onFinished(r.length); // finished sending
@@ -412,8 +411,8 @@ export class SubEvent<T = unknown> {
    *
    * @see [[ISubStat]]
    */
-  public getStat(options?: { minUse?: number }): ISubStat {
-    const stat: ISubStat = { named: {}, unnamed: 0 };
+  public getStat(options?: { minUse?: number }): SubStat {
+    const stat: SubStat = { named: {}, unnamed: 0 };
     this._subs.forEach((s) => {
       if (s.name) {
         if (s.name in stat.named) {
@@ -425,7 +424,7 @@ export class SubEvent<T = unknown> {
         stat.unnamed++;
       }
     });
-    const minUse = (options && options.minUse) ?? 0;
+    const minUse = options?.minUse ?? 0;
     if (minUse > 1) {
       for (const a in stat.named) {
         if (stat.named[a] < minUse) {
@@ -510,8 +509,8 @@ export class SubEvent<T = unknown> {
       throw new TypeError(Stat.errInvalidOptions);
     }
     const { name, timeout = -1 } = options || {};
-    let timer: any,
-      selfCancel = false;
+    let timer: any;
+    let selfCancel = false;
     return new Promise((resolve, reject) => {
       const onCancel = () => {
         if (!selfCancel) {
@@ -554,7 +553,7 @@ export class SubEvent<T = unknown> {
    *
    * @hidden
    */
-  protected _getRecipients(): ISubscriber<T>[] {
+  protected _getRecipients(): Subscriber<T>[] {
     const end = this.maxSubs > 0 ? this.maxSubs : this._subs.length;
     return this._subs.slice(0, end);
   }
@@ -569,7 +568,7 @@ export class SubEvent<T = unknown> {
    * @returns
    * Function that implements the [[unsubscribe]] request.
    */
-  protected _createCancel(sub: ISubscriber<T>): () => void {
+  protected _createCancel(sub: Subscriber<T>): () => void {
     return () => {
       this._cancelSub(sub);
     };
@@ -582,12 +581,12 @@ export class SubEvent<T = unknown> {
    * @param sub
    * Subscriber to be removed, which must be on the list.
    */
-  protected _cancelSub(sub: ISubscriber<T>) {
+  protected _cancelSub(sub: Subscriber<T>) {
     this._subs.splice(this._subs.indexOf(sub), 1);
     sub.cancel();
     sub.cb = undefined; // prevent further emits
     if (typeof this.options.onCancel === "function") {
-      const ctx: ISubContext<T> = {
+      const ctx: SubContext<T> = {
         event: sub.event,
         name: sub.name,
         data: sub.data,
