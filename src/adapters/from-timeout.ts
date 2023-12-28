@@ -5,7 +5,7 @@ import {
   SubEvent,
   SubFunction,
   Subscription,
-} from "../../src/index.js";
+} from "../index.js";
 
 /**
  * Returns a new TimeoutEvent that triggers a fresh setTimeout on each subscribe,
