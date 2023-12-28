@@ -1,4 +1,11 @@
-import {IEmitOptions, ISubContext, ISubOptions, SubEvent, SubFunction, Subscription} from '../../src';
+import {
+  EmitOptions,
+  SubContext,
+  SubOptions,
+  SubEvent,
+  SubFunction,
+  Subscription,
+} from "../../src/index.js";
 
 /**
  * Returns a new TimeoutEvent that triggers a fresh setTimeout on each subscribe,
@@ -6,8 +13,8 @@ import {IEmitOptions, ISubContext, ISubOptions, SubEvent, SubFunction, Subscript
  *
  * And if the client cancels the subscription first, the event won't happen.
  */
-export function fromTimeout(timeout: number = 0, options?: IEmitOptions): TimeoutEvent {
-    return new TimeoutEvent(timeout, options);
+export function fromTimeout(timeout = 0, options?: EmitOptions): TimeoutEvent {
+  return new TimeoutEvent(timeout, options);
 }
 
 /**
@@ -16,23 +23,23 @@ export function fromTimeout(timeout: number = 0, options?: IEmitOptions): Timeou
  * A new timeout is started for every fresh subscriber.
  */
 export class TimeoutEvent extends SubEvent<void> {
-    constructor(timeout: number = 0, options?: IEmitOptions) {
-        const onSubscribe = (ctx: ISubContext<void>) => {
-            ctx.data = setTimeout(() => {
-                ctx.event.emit(undefined, options);
-            }, timeout);
-        };
-        const onCancel = (ctx: ISubContext<void>) => {
-            clearTimeout(ctx.data);
-        };
-        super({onSubscribe, onCancel});
-    }
+  constructor(timeout = 0, options?: EmitOptions) {
+    const onSubscribe = (ctx: SubContext<void>) => {
+      ctx.data = setTimeout(() => {
+        ctx.event.emit(undefined, options);
+      }, timeout);
+    };
+    const onCancel = (ctx: SubContext<void>) => {
+      clearTimeout(ctx.data);
+    };
+    super({ onSubscribe, onCancel });
+  }
 
-    subscribe(cb: SubFunction<void>, options?: ISubOptions): Subscription {
-        const sub = super.subscribe(() => {
-            sub.cancel();
-            return cb.call(options && options.thisArg);
-        }, options);
-        return sub;
-    }
+  subscribe(cb: SubFunction<void>, options?: SubOptions): Subscription {
+    const sub = super.subscribe(() => {
+      sub.cancel();
+      return cb.call(options?.thisArg);
+    }, options);
+    return sub;
+  }
 }
