@@ -53,7 +53,7 @@ export interface EmitOptions {
    * @param name
    * `name`: The subscription `name`, if set during [[subscribe]] call.
    */
-  onError?: (err: Error, name?: string) => void;
+  onError?: (err: unknown, name?: string) => void;
 
   /**
    * Notification callback of when the last recipient has received the data.
@@ -353,13 +353,13 @@ export class SubEvent<T = unknown> {
       schedule === EmitSchedule.Async ? Stat.callNext : Stat.callNow;
     start(() => {
       const r = this._getRecipients();
-      r.forEach((sub, index) =>
+      for (const [index, sub] of r.entries()) {
         middle(() => {
           if (onError) {
             try {
               const res = sub?.cb(data);
               if (res && typeof res.catch === "function") {
-                res.catch((err: any) => onError(err, sub.name));
+                res.catch((err: unknown) => onError(err, sub.name));
               }
             } catch (e) {
               onError(e, sub.name);
@@ -370,8 +370,8 @@ export class SubEvent<T = unknown> {
           if (onFinished && index === r.length - 1) {
             onFinished(r.length); // finished sending
           }
-        }),
-      );
+        });
+      }
     });
     return this;
   }
