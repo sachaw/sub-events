@@ -1,4 +1,4 @@
-import {IEmitOptions, IEventOptions, ISubscriber, SubEvent} from './event';
+import {IEmitOptions, IEventOptions, ISubscriber, SubEvent} from './event.js';
 
 /**
  * Represents a change in the number of subscriptions, as used with [[onCount]] event.

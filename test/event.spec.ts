@@ -1,5 +1,5 @@
-import {chai, dummy, expect} from './';
-import {EmitSchedule, EventConsumer, ISubContext, SubEvent} from '../src';
+import {chai, dummy, expect} from './index.js';
+import {EmitSchedule, EventConsumer, ISubContext, SubEvent} from '../src/index.js';
 
 const errInvalidOptions = `Invalid "options" parameter.`;
 

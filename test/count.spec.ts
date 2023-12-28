@@ -1,5 +1,5 @@
-import {chai, expect} from './';
-import {EmitSchedule, ISubCountChange, SubEventCount} from '../src';
+import {chai, expect} from './index.js';
+import {EmitSchedule, ISubCountChange, SubEventCount} from '../src/index.js';
 
 const dummy = () => {
 };

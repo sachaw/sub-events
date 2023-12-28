@@ -1,6 +1,6 @@
-import {ISubOptions, ISubStat, SubEvent, SubFunction} from './event';
-import {Subscription} from './sub';
-import {Private} from './utils';
+import {ISubOptions, ISubStat, SubEvent, SubFunction} from './event.js';
+import {Subscription} from './sub.js';
+import {Private} from './utils/index.js';
 
 /**
  * Private-property implementation.

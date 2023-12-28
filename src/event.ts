@@ -1,5 +1,5 @@
-import {Subscription} from './sub';
-import {EventConsumer} from './consumer';
+import {Subscription} from './sub.js';
+import {EventConsumer} from './consumer.js';
 
 /**
  * Schedule for emitting / broadcasting data to subscribers, to be used by method [[emit]].

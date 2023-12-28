@@ -1,5 +1,5 @@
-import {dummy, expect} from './';
-import {SubEvent} from '../src';
+import {dummy, expect} from './index.js';
+import {SubEvent} from '../src/index.js';
 
 describe('Subscription', () => {
     it('must maintain the live status correctly', () => {

@@ -1,5 +1,5 @@
-import {dummy, expect} from './';
-import {EventConsumer, SubEvent, Subscription} from '../src';
+import {dummy, expect} from './index.js';
+import {EventConsumer, SubEvent, Subscription} from '../src/index.js';
 
 describe('EventConsumer', () => {
     const e = new SubEvent<number>({maxSubs: 10});
