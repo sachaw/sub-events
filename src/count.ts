@@ -18,7 +18,7 @@ export interface SubCountChange {
 /**
  * Constructor options for [[SubEventCount]] class.
  */
-export interface ICountOptions<T> extends EventOptions<T> {
+export interface CountOptions<T> extends EventOptions<T> {
   /**
    * Emit options for event [[onCount]].
    */
@@ -49,7 +49,7 @@ export class SubEventCount<T = unknown> extends SubEvent<T> {
    * @param options
    * Configuration Options.
    */
-  constructor(options?: ICountOptions<T>) {
+  constructor(options?: CountOptions<T>) {
     super(options);
     const eo = options?.emitOptions;
     this._notify = (data: SubCountChange) => this.onCount.emit(data, eo);

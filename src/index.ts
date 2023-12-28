@@ -12,6 +12,6 @@ export {
 export {
   SubEventCount,
   SubCountChange,
-  ICountOptions,
+  CountOptions,
 } from "./count.js";
 export { EventConsumer } from "./consumer.js";

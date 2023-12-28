@@ -53,7 +53,7 @@ export interface EmitOptions {
    * @param name
    * `name`: The subscription `name`, if set during [[subscribe]] call.
    */
-  onError?: (err: any, name?: string) => void;
+  onError?: (err: Error, name?: string) => void;
 
   /**
    * Notification callback of when the last recipient has received the data.
@@ -88,7 +88,7 @@ export interface SubContext<T = unknown> {
    * Unknown-type data to let event wrappers persist any
    * context they need within the event's lifecycle.
    */
-  data?: any;
+  data?: unknown;
 }
 
 /**
@@ -413,7 +413,7 @@ export class SubEvent<T = unknown> {
    */
   public getStat(options?: { minUse?: number }): SubStat {
     const stat: SubStat = { named: {}, unnamed: 0 };
-    this._subs.forEach((s) => {
+    for (const s of this._subs) {
       if (s.name) {
         if (s.name in stat.named) {
           stat.named[s.name]++;
@@ -423,7 +423,7 @@ export class SubEvent<T = unknown> {
       } else {
         stat.unnamed++;
       }
-    });
+    }
     const minUse = options?.minUse ?? 0;
     if (minUse > 1) {
       for (const a in stat.named) {
@@ -455,15 +455,15 @@ export class SubEvent<T = unknown> {
       typeof this.options.onCancel === "function" && this.options.onCancel;
     const copy = onCancel ? [...this._subs] : [];
     const n = this._subs.length;
-    this._subs.forEach((sub) => {
+    for (const sub of this._subs) {
       sub.cancel();
       sub.cb = undefined; // prevent further emits
-    });
+    }
     this._subs.length = 0;
     if (onCancel) {
-      copy.forEach((c) => {
+      for (const c of copy) {
         onCancel({ event: c.event, name: c.name, data: c.data });
-      });
+      }
     }
     return n;
   }

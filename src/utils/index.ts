@@ -1,1 +1,1 @@
-export { Private } from "./private";
+export { Private } from "./private.js";

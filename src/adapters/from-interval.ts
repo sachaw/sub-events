@@ -11,7 +11,7 @@ export function fromInterval(
   options?: EmitOptions,
 ): SubEventCount<void> {
   const sec: SubEventCount<void> = new SubEventCount();
-  let timer: any;
+  let timer: NodeJS.Timeout;
   sec.onCount.subscribe((info) => {
     const start = info.prevCount === 0; // fresh start
     const stop = info.newCount === 0; // no subscriptions left

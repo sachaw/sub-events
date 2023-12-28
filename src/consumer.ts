@@ -7,7 +7,7 @@ import { Private } from "./utils/index.js";
  *
  * @hidden
  */
-const pp = new Private<EventConsumer, SubEvent<any>>();
+const pp = new Private<EventConsumer, SubEvent<unknown>>();
 
 /**
  * ### class EventConsumer\<T = unknown, E extends SubEvent\<T\> = SubEvent\<T\>>
