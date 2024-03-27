@@ -1,4 +1,5 @@
-import { EmitOptions, EventOptions, Subscriber, SubEvent } from "./event.js";
+import type { EmitOptions, EventOptions, Subscriber } from "./event.js";
+import { SubEvent } from "./event.js";
 
 /**
  * Represents a change in the number of subscriptions, as used with [[onCount]] event.

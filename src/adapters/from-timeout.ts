@@ -1,8 +1,8 @@
-import {
+import { SubEvent } from "../index.js";
+import type {
   EmitOptions,
   SubContext,
   SubOptions,
-  SubEvent,
   SubFunction,
   Subscription,
 } from "../index.js";
@@ -30,7 +30,7 @@ export class TimeoutEvent extends SubEvent<void> {
       }, timeout);
     };
     const onCancel = (ctx: SubContext<void>) => {
-      clearTimeout(ctx.data);
+      clearTimeout(ctx.data as number);
     };
     super({ onSubscribe, onCancel });
   }

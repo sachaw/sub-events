@@ -357,7 +357,7 @@ export class SubEvent<T = unknown> {
         middle(() => {
           if (onError) {
             try {
-              const res = sub?.cb(data);
+              const res = sub.cb?.(data);
               if (res && typeof res.catch === "function") {
                 res.catch((err: unknown) => onError(err, sub.name));
               }
@@ -365,7 +365,7 @@ export class SubEvent<T = unknown> {
               onError(e, sub.name);
             }
           } else {
-            sub?.cb(data);
+            sub.cb?.(data);
           }
           if (onFinished && index === r.length - 1) {
             onFinished(r.length); // finished sending
@@ -426,8 +426,10 @@ export class SubEvent<T = unknown> {
     }
     const minUse = options?.minUse ?? 0;
     if (minUse > 1) {
+      let named = 0;
       for (const a in stat.named) {
-        if (stat.named[a] < minUse) {
+        named = stat.named[a] ?? 0;
+        if (named < minUse) {
           delete stat.named[a];
         }
       }
@@ -518,7 +520,7 @@ export class SubEvent<T = unknown> {
             clearTimeout(timer);
           }
           reject(
-            new Error(name ? `Event "${name}" cancelled.` : `Event cancelled.`),
+            new Error(name ? `Event "${name}" cancelled.` : "Event cancelled."),
           );
         }
       };
@@ -538,7 +540,7 @@ export class SubEvent<T = unknown> {
           selfCancel = true;
           sub.cancel();
           reject(
-            new Error(name ? `Event "${name}" timed out.` : `Event timed out.`),
+            new Error(name ? `Event "${name}" timed out.` : "Event timed out."),
           );
         }, timeout);
       }

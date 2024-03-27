@@ -1,4 +1,5 @@
-import { SubEventCount, EmitOptions } from "../index.js";
+import { SubEventCount } from "../index.js";
+import type { EmitOptions } from "../index.js";
 
 /**
  * Helps supporting any custom Event-like type.

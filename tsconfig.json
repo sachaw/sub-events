@@ -23,7 +23,8 @@
     "emitDecoratorMetadata": true,
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
-    "removeComments": false
+    "removeComments": false,
+    "esModuleInterop": false
   },
   "include": ["src/**/*"],
   "typedocOptions": {

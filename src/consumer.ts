@@ -1,5 +1,5 @@
-import { SubOptions, SubStat, SubEvent, SubFunction } from "./event.js";
-import { Subscription } from "./sub.js";
+import type { SubOptions, SubStat, SubEvent, SubFunction } from "./event.js";
+import type { Subscription } from "./sub.js";
 import { Private } from "./utils/index.js";
 
 /**
@@ -7,7 +7,7 @@ import { Private } from "./utils/index.js";
  *
  * @hidden
  */
-const pp = new Private<EventConsumer, SubEvent<unknown>>();
+const pp = new Private<EventConsumer<unknown>, SubEvent>();
 
 /**
  * ### class EventConsumer\<T = unknown, E extends SubEvent\<T\> = SubEvent\<T\>>
@@ -40,7 +40,7 @@ const pp = new Private<EventConsumer, SubEvent<unknown>>();
  * }
  * ```
  */
-export class EventConsumer<T = unknown, E extends SubEvent<T> = SubEvent<T>> {
+export class EventConsumer<T, E extends SubEvent<T> = SubEvent<T>> {
   /**
    * Class Constructor.
    *
@@ -48,7 +48,7 @@ export class EventConsumer<T = unknown, E extends SubEvent<T> = SubEvent<T>> {
    * Event object to be encapsulated.
    */
   constructor(event: E) {
-    pp.set(this, event);
+    pp.set(this, event as SubEvent);
   }
 
   /**
@@ -69,21 +69,21 @@ export class EventConsumer<T = unknown, E extends SubEvent<T> = SubEvent<T>> {
    * Forwards into [[SubEvent.subscribe]] of the contained event.
    */
   subscribe(cb: SubFunction<T>, options?: SubOptions): Subscription {
-    return pp.get(this).subscribe(cb, options);
+    return pp.get(this).subscribe(cb as SubFunction<unknown>, options);
   }
 
   /**
    * Forwards into [[SubEvent.once]] of the contained event.
    */
   once(cb: SubFunction<T>, options?: SubOptions): Subscription {
-    return pp.get(this).once(cb, options);
+    return pp.get(this).once(cb as SubFunction<unknown>, options);
   }
 
   /**
    * Forwards into [[SubEvent.toPromise]] of the contained event.
    */
   toPromise(options?: { name?: string; timeout?: number }): Promise<T> {
-    return pp.get(this).toPromise(options);
+    return pp.get(this).toPromise(options) as Promise<T>;
   }
 
   /**

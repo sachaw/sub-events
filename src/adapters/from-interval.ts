@@ -1,4 +1,5 @@
-import { EmitOptions, SubEventCount } from "../index.js";
+import { SubEventCount } from "../index.js";
+import type { EmitOptions } from "../index.js";
 
 /**
  * Creates a time-interval event:
